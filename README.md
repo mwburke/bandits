@@ -1,2 +1,3 @@
-# bandits
-Exploring some common bandit algorithms
+# Bandits
+
+Exploring some common multi-armed bandit algorithms
