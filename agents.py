@@ -114,7 +114,9 @@ class GradientBandit(ActionValueMethod):
 
     def update(self, action, reward):
         self.counts[action] += 1
+        # selected action preference udpate
         self.values[action] += self.alpha * (reward - self.avg_reward) * (1 - self.probs[action])
+        # all other actions preference updates
         indices = np.array([i for i in np.arange(self.actions) if i != action])
         self.values[indices] -= self.alpha * (reward - self.avg_reward) * self.probs[indices]
         self.t += 1
@@ -123,19 +125,3 @@ class GradientBandit(ActionValueMethod):
 
     def update_probs(self):
         self.probs = np.exp(self.values) / np.sum(np.exp(self.values))
-
-
-class ContextualBandit(ABC):
-
-    @abstractmethod
-    def reset(self):
-        pass
-
-    @abstractmethod
-    def act(self, context):
-        # Abstract function to be implemented in subclasses
-        pass
-
-    @abstractmethod
-    def update(self, action, context, reward):
-        pass

@@ -1,3 +1,6 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 import random
 
 # TODO: nonstationary MAB
@@ -25,6 +28,11 @@ class BernoulliMAB(MAB):
     def get_reward(self, prob):
         return int(random.random() < prob)
 
+    def plot_rewards(self):
+        plt.scatter(np.arange(len(self.bandits)), np.array(self.bandits))
+        plt.ylim(0, 1)
+        plt.show()
+
 
 class GaussianMAB(MAB):
     """
@@ -36,3 +44,11 @@ class GaussianMAB(MAB):
     def get_reward(self, params):
         mu, sigma = params
         return random.gauss(mu, sigma)
+
+    def plot_rewards(self):
+        plt.errorbar(
+            x=np.arange(len(self.bandits)),
+            y=np.array([mu for mu, sigma in self.bandits]),
+            yerr=np.array([sigma for mu, sigma in self.bandits])
+        )
+        plt.show()

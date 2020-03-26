@@ -10,6 +10,14 @@ import numpy as np
 Here's some selected algorithms implemented based on the paper
 Adapting multi-armed bandits policies to contextual bandits scenarios by David Cortes
 arXiv:1811.04383
+
+The main idea is to have "oracles" (binary classification models) for each arm, and
+to compare the predictions from each oracle to decide which arm to pull. This method
+does make some strong assumptions about having binary rewards among other things, so
+it may not be a valid approach for real-valued rewards.
+
+NOTE: these are untested, just coding up to understand logic of the paper a little better,
+      thought I would keep them here for reference
 """
 
 
@@ -155,6 +163,21 @@ class TreeEnsembleBootstrappedUCB(OracleBandit):
 
 
 class ContextualAdaptiveGreedy(OracleBandit):
+    """
+    The paper identifies this method as one of the overall top performing ones.
+
+    Idea is to start with a high threshold. At each step, if any of the predictions
+    from the oracles is above that threshold, pull the arm with the highest prediction.
+
+    At first, the threshold will be high enough that all of the arms are pulled randomly.
+    If any one of them is performing very well, it will get exploited and either continue
+    to be exploited as it performs well, or the unusual high estimate will be updated and
+    fall below the exploit threshold again.
+
+    Later on, the threshold will be low enough that all predictions will fall below it, and
+    the agent will be in full exploit mode.
+    """
+
     def __init__(self, num_actions, model, partial_fit, min_explore_count, action_names, threshold, decay_rate):
         super().__init__(num_actions, model, partial_fit, min_explore_count, action_names)
         self.threshold = threshold
